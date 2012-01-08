@@ -56,17 +56,6 @@ public final class MMOInfoGold extends MMOPlugin {
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 
-			pm.registerEvent(Type.PLAYER_MOVE,
-					new PlayerListener() {
-
-						@Override
-						public void onPlayerMove(final PlayerMoveEvent event) {
-							final CustomLabel label = widgets.get(event.getPlayer());
-							if (label != null) {
-								label.change();
-							}
-						}
-					}, Priority.Monitor, this);
 			pm.registerEvent(Type.CUSTOM_EVENT,
 					new MMOListener() {
 
@@ -97,16 +86,11 @@ public final class MMOInfoGold extends MMOPlugin {
 	public static final class CustomLabel extends GenericLabel {
 
 		/** If the widget needs to update the display. */
-		private transient boolean check = true;
-
-		/** Tell the widget it needs to update the display. */
-		public void change() {
-			check = true;
-		}
+		private transient int tick = 0;
 
 		@Override
 		public void onTick() {
-			if (check) {
+			if (tick++ % 20 == 0) {
 				final String[] money = Float.toString((float) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");
 				setText(String.format(ChatColor.WHITE + "%s" + ChatColor.YELLOW + "g " + ChatColor.WHITE + "%s" + ChatColor.GRAY + "s", money.length > 0 ? money[0] : "0", money.length > 1 ? money[1] : "0"));
 			}
