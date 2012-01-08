@@ -1,12 +1,12 @@
-name: mmoInfoCoords
-main: mmo.Info.MMOInfoCoords
-version: 1.1
+name: mmoInfoGold
+main: mmo.Info.MMOInfoGold
+version: 1.0
 website: http://forums.bukkit.org/threads/
 author: Rycochet <rycochet@rycochet.com>
-depend: [Spout,mmoCore,mmoInfo]
+depend: [Spout,mmoCore,mmoInfo,Vault]
 
-description: Adds {coords} to the info tokens
+description: Adds {gold} to the info tokens
 permissions:
-  mmo.info.coords:
-    description: Allows {coords} to show the current player coordinates
-    default: op
+  mmo.info.gold:
+    description: Allows {gold} to show the current player gold (from Vault)
+    default: true
