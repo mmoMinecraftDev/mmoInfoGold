@@ -89,7 +89,7 @@ public final class MMOInfoGold extends MMOPlugin {
 		@Override
 		public void onTick() {
 			if (tick++ % 20 == 0) {
-				final String[] money = Float.toString((float) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");
+				final String[] money = Double.toString((double) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");
 				setText(String.format(ChatColor.WHITE + "%s" + ChatColor.YELLOW + "g " + ChatColor.WHITE + "%s" + ChatColor.GRAY + "s", money.length > 0 ? money[0] : "0", money.length > 1 ? money[1] : "0"));
 			}
 		}
