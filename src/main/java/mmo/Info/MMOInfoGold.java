@@ -18,30 +18,37 @@ package mmo.Info;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import mmo.Core.InfoAPI.MMOInfoEvent;
-import mmo.Core.MMOListener;
 import mmo.Core.MMOPlugin;
 import mmo.Core.util.EnumBitSet;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
 import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-/** Adds {Gold} to the mmoInfo token list. */
+/**
+ * Adds {Gold} to the mmoInfo token list.
+ */
 public final class MMOInfoGold extends MMOPlugin {
-
-	/** Map of player to label, used for telling widget that it needs to be updated. */
+	/**
+	 * Map of player to label, used for telling widget that it needs to be updated.
+	 */
 	private final transient Map<Player, CustomLabel> widgets = new HashMap<Player, CustomLabel>();
-	/** The Vault economy in use. */
+	/**
+	 * The Vault economy in use.
+	 */
 	private static Economy economy;
 
 	@Override
 	public EnumBitSet mmoSupport(final EnumBitSet support) {
-		support.set(Support.MMO_PLAYER);
 		support.set(Support.MMO_NO_CONFIG);
 		support.set(Support.MMO_AUTO_EXTRACT);
 		return support;
@@ -53,37 +60,25 @@ public final class MMOInfoGold extends MMOPlugin {
 		final RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
-
-			pm.registerEvent(Type.CUSTOM_EVENT,
-					new MMOListener() {
-
-						@Override
-						public void onMMOInfo(final MMOInfoEvent event) {
-							if (event.isToken("gold")) {
-								final SpoutPlayer player = event.getPlayer();
-								if (player.hasPermission("mmo.info.gold")) {
-									final CustomLabel label = (CustomLabel) new CustomLabel().setResize(true).setFixed(true);
-									widgets.put(player, label);
-									event.setWidget(plugin, label);
-									event.setIcon("coin.png");
-								} else {
-									event.setCancelled(true);
-								}
-							}
-						}
-					}, Priority.Normal, this);
 		}
+		registerEvents(new MMOListener(this));
 	}
 
-	@Override
-	public void onPlayerQuit(final Player player) {
-		widgets.remove(player);
+	/**
+	 * Return read-only copy of our map of our widgets.
+	 * @return
+	 */
+	public Map getWidgets() {
+		return widgets;
 	}
 
-	/** One per player. */
+	/**
+	 * One per player.
+	 */
 	public static final class CustomLabel extends GenericLabel {
-
-		/** If the widget needs to update the display. */
+		/**
+		 * If the widget needs to update the display.
+		 */
 		private transient int tick = 0;
 
 		@Override
@@ -91,6 +86,37 @@ public final class MMOInfoGold extends MMOPlugin {
 			if (tick++ % 20 == 0) {
 				final String[] money = Double.toString((double) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");
 				setText(String.format(ChatColor.WHITE + "%s" + ChatColor.YELLOW + "g " + ChatColor.WHITE + "%s" + ChatColor.GRAY + "s", money.length > 0 ? money[0] : "0", money.length > 1 ? money[1] : "0"));
+			}
+		}
+	}
+
+	/**
+	 * Only one listener.
+	 */
+	public static final class MMOListener implements Listener {
+		private MMOInfoGold plugin;
+
+		public MMOListener(MMOInfoGold plugin) {
+			this.plugin = plugin;
+		}
+
+		@EventHandler
+		public void onPlayerQuit(PlayerQuitEvent event) {
+			plugin.getWidgets().remove(event.getPlayer());
+		}
+
+		@EventHandler
+		public void onMMOInfo(final MMOInfoEvent event) {
+			if (event.isToken("gold")) {
+				final SpoutPlayer player = event.getPlayer();
+				if (player.hasPermission("mmo.info.gold")) {
+					final CustomLabel label = (CustomLabel) new CustomLabel().setResize(true).setFixed(true);
+					plugin.getWidgets().put(player, label);
+					event.setWidget(plugin, label);
+					event.setIcon("coin.png");
+				} else {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}

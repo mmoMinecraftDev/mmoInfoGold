@@ -57,14 +57,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<repository>
 			<id>spout-repo</id>
 			<name>Spout API</name>
-			<url>http://repo.getspout.org/</url>
-			<layout>default</layout>
+			<url>http://repo.spout.org/</url>
 		</repository>
+        <repository>
+            <id>vault-repo</id>
+            <name>Vault</name>
+            <url>http://ci.milkbowl.net/plugin/repository/everything/</url>
+        </repository>
 		<repository>
 			<id>mmoMinecraft-repo</id>
 			<name>mmoMinecraft API</name>
 			<url>http://repo.mmo.me.uk/</url>
-			<layout>default</layout>
 		</repository>
 	</repositories>
 
@@ -73,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.0.0-R1-SNAPSHOT</version>
+			<version>1.2.5-R1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -95,9 +98,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.milkbowl</groupId>
-			<artifactId>vault</artifactId>
-			<version>1.2.0-b000</version>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>1.2.13-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
