@@ -1,12 +1,13 @@
 name: mmoInfoGold
-main: mmo.Info.MMOInfoGold
-version: 1.0
-website: http://forums.bukkit.org/threads/
-author: Rycochet <rycochet@rycochet.com>
-depend: [Spout,mmoCore,mmoInfo,Vault]
+version: ${releaseVersion} b${buildNumber}
+description: Adds a {gold} token to the mmoInfo token list.
+author: mmoMinecraftDev
+website: http://mmo.me.uk
 
-description: Adds {gold} to the info tokens
+main: mmo.Info.MMOInfoGold
+depend: [Spout, mmoCore, mmoInfo, Vault]
+
 permissions:
-  mmo.info.gold:
-    description: Allows {gold} to show the current player gold (from Vault)
-    default: true
+    mmo.info.gold:
+        description: Allows {gold} to show the current player gold (from Vault)
+        default: true
