@@ -5,7 +5,7 @@
 	<name>mmoInfoGold</name>
 	<groupId>mmo.Info</groupId>
 	<artifactId>mmoInfoGold</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<url>http://github.com/mmoMinecraftDev/mmoInfoCoords</url>
 	<description>Adds a {gold} token to the mmoInfo token list.</description>
 
