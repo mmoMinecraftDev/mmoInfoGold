@@ -37,21 +37,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-/**
- * Adds {Gold} to the mmoInfo token list.
- */
+
 public final class MMOInfoGold extends MMOPlugin {
-	/**
-	 * Map of player to label, used for telling widget that it needs to be updated.
-	 */
 	private final transient Map<Player, CustomLabel> widgets = new HashMap<Player, CustomLabel>();
-	/**
-	 * The Vault economy in use.
-	 */
 	private static Economy economy;
 	private static String config_curtype = "US";
 	private static String config_displayas = "currency";
 	private static NumberFormat numForm;
+	private static Locale caLoc = new Locale("en", "US");
 
 	@Override
 	public EnumBitSet mmoSupport(final EnumBitSet support) {
@@ -69,54 +62,16 @@ public final class MMOInfoGold extends MMOPlugin {
 		registerEvents(new MMOListener(this));
 	}
 
+	public void updateCur() {
+		
+	}
+	
 	@Override
 	public void loadConfiguration(final FileConfiguration cfg) {
 		config_curtype = cfg.getString("curtype", config_curtype);
 		config_displayas = cfg.getString("displayas", config_displayas);		
 	}
-	/**
-	 * Return read-only copy of our map of our widgets.
-	 * @return
-	 */
-	public Map getWidgets() {
-		return widgets;
-	}
-
-	/**
-	 * One per player.
-	 */
-	public static final class CustomLabel extends GenericLabel {
-		/**
-		 * If the widget needs to update the display.
-		 */
-		private transient int tick = 0;
-
-		@Override
-		public void onTick() {
-			if (tick++ % 100 == 0) {
-				if (config_displayas.equalsIgnoreCase("currency")) {
-					if (config_curtype.equalsIgnoreCase("US")) {
-						Locale caLoc = new Locale("en", "US");
-						NumberFormat numForm = NumberFormat.getCurrencyInstance(caLoc);
-						final String plat = numForm.format(economy.getBalance(this.getScreen().getPlayer().getName()));
-						setText(String.format(ChatColor.WHITE + plat));
-					} else if (config_curtype.equalsIgnoreCase("DE")) {
-						Locale caLoc = new Locale("de", "DE");
-						NumberFormat numForm = NumberFormat.getCurrencyInstance(caLoc);
-						final String plat = numForm.format(economy.getBalance(this.getScreen().getPlayer().getName()));
-						setText(String.format(ChatColor.WHITE + plat));
-					}
-				} else {
-     			final String[] money = Double.toString((double) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");				
-     			setText(String.format(ChatColor.WHITE + "%s" + ChatColor.YELLOW + "g " + ChatColor.WHITE + "%s" + ChatColor.GRAY + "s", money.length > 0 ? money[0] : "0", money.length > 1 ? money[1] : "0"));
-				}
-     		}
-		}
-	}
-
-	/**
-	 * Only one listener.
-	 */
+	
 	public static final class MMOListener implements Listener {
 		private MMOInfoGold plugin;
 
@@ -128,11 +83,40 @@ public final class MMOInfoGold extends MMOPlugin {
 		public void onMMOInfo(final MMOInfoEvent event) {
 			if (event.isToken("gold")) {
 				final SpoutPlayer player = event.getPlayer();
+				if (config_displayas.equalsIgnoreCase("currency")) {
+					if (config_curtype.equalsIgnoreCase("US")) {
+						numForm = NumberFormat.getCurrencyInstance(caLoc);
+					} else if (config_curtype.equalsIgnoreCase("DE")) {
+						final Locale caLoc = new Locale("de", "DE");							
+					}
+				}
+
 				if (player.hasPermission("mmo.info.gold")) {
 					final CustomLabel label = (CustomLabel) new CustomLabel().setResize(true).setFixed(true);
 					plugin.getWidgets().put(player, label);
 					event.setWidget(plugin, label);
 					event.setIcon("coin.png");				
+				}
+			}
+		}
+	}
+
+	public Map getWidgets() {
+		return widgets;
+	}
+
+	public static final class CustomLabel extends GenericLabel {		
+		private transient int tick = 0;
+
+		@Override
+		public void onTick() {
+			if (tick++ % 100 == 0) {
+				if (config_displayas.equalsIgnoreCase("currency")) {				
+					final String plat = numForm.format(economy.getBalance(this.getScreen().getPlayer().getName()));
+					setText(String.format(ChatColor.WHITE + plat));						
+				} else {
+					final String[] money = Double.toString((double) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");				
+					setText(String.format(ChatColor.WHITE + "%s" + ChatColor.YELLOW + "g " + ChatColor.WHITE + "%s" + ChatColor.GRAY + "s", money.length > 0 ? money[0] : "0", money.length > 1 ? money[1] : "0"));
 				}
 			}
 		}
