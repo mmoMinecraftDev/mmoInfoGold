@@ -59,7 +59,8 @@ public final class MMOInfoGold extends MMOPlugin {
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 		}
-		registerEvents(new MMOListener(this));
+		// TODO: is this register needed?
+		//registerEvents(new MMOListener(this));
 	}
 
 	public void updateCur() {
