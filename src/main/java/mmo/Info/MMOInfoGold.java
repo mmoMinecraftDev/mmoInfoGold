@@ -38,7 +38,7 @@ import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 
-public final class MMOInfoGold extends MMOPlugin {
+public final class MMOInfoGold extends MMOPlugin implements Listener {
 	private final transient Map<Player, CustomLabel> widgets = new HashMap<Player, CustomLabel>();
 	private static Economy economy;
 	private static String config_curtype = "US";
@@ -58,9 +58,8 @@ public final class MMOInfoGold extends MMOPlugin {
 		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
-		}
-		// TODO: is this register needed?
-		//registerEvents(new MMOListener(this));
+		}		
+		getServer().getPluginManager().registerEvents(new MMOListener(this), this);
 	}
 
 	public void updateCur() {
