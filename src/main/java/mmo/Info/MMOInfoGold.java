@@ -42,6 +42,7 @@ public final class MMOInfoGold extends MMOPlugin implements Listener {
 	private final transient Map<Player, CustomLabel> widgets = new HashMap<Player, CustomLabel>();
 	private static Economy economy;
 	private static String config_curtype = "US";
+	private static Boolean config_displayas_decimal = false;
 	private static String config_displayas = "currency";
 	private static NumberFormat numForm;
 	private static Locale caLoc = new Locale("en", "US");
@@ -70,6 +71,7 @@ public final class MMOInfoGold extends MMOPlugin implements Listener {
 	public void loadConfiguration(final FileConfiguration cfg) {
 		config_curtype = cfg.getString("curtype", config_curtype);
 		config_displayas = cfg.getString("displayas", config_displayas);		
+		config_displayas_decimal = cfg.getBoolean("displayas_decimal", config_displayas_decimal);
 	}
 	
 	public static final class MMOListener implements Listener {
@@ -114,9 +116,12 @@ public final class MMOInfoGold extends MMOPlugin implements Listener {
 				if (config_displayas.equalsIgnoreCase("currency")) {				
 					final String plat = numForm.format(economy.getBalance(this.getScreen().getPlayer().getName()));
 					setText(String.format(ChatColor.WHITE + plat));						
-				} else {
+				} else if (config_displayas_decimal) {
 					final String[] money = Double.toString((double) economy.getBalance(this.getScreen().getPlayer().getName())).split("\\.");				
 					setText(String.format(ChatColor.WHITE + "%s" + ChatColor.YELLOW + "g " + ChatColor.WHITE + "%s" + ChatColor.GRAY + "s", money.length > 0 ? money[0] : "0", money.length > 1 ? money[1] : "0"));
+				} else {				
+					final int plat = (int) economy.getBalance(this.getScreen().getPlayer().getName());
+					setText(String.format(ChatColor.WHITE + Integer.toString(plat)));
 				}
 			}
 		}

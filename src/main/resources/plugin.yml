@@ -10,4 +10,4 @@ depend: [Spout, mmoCore, mmoInfo, Vault]
 permissions:
     mmo.info.gold:
         description: Allows {gold} to show the current player gold (from Vault)
-        default: true
+        default: op
